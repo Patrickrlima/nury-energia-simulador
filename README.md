@@ -93,3 +93,5 @@ Referência: site e posicionamento públicos da Nury Energia (Osório/RS) — pa
 - `historyService.ts` usa `localStorage` (ver nota sobre leads do site acima); é o ponto de troca por uma API real quando o histórico virar CRM/dashboard comercial (seção 25 do briefing) e quando quiser captar de fato os leads gerados em `/simule`.
 - `FinancingSimulator` já calcula parcela (tabela Price) mas com taxas ilustrativas — pronto para receber condições reais de parceiros financeiros.
 - `EMPRESA.telefoneComercial` em `solarConfig.ts` está com um número de exemplo — trocar pelo WhatsApp comercial real antes de publicar (esse é o número que recebe as mensagens de "Quero minha proposta" do simulador público).
+
+<!-- redeploy trigger -->
