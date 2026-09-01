@@ -1,0 +1,173 @@
+@import "tailwindcss";
+
+@theme {
+  /* ---- Nury Energia brand tokens ---- */
+  /* Deep navy/teal: technology, trust, night sky before sunrise */
+  --color-brand-navy-950: #04101c;
+  --color-brand-navy-900: #082032;
+  --color-brand-navy-800: #0d3450;
+  --color-brand-navy-700: #124a6e;
+  --color-brand-navy-600: #17608c;
+  --color-brand-navy-500: #1c78ac;
+
+  /* Teal/cyan: clean energy, freshness */
+  --color-brand-teal-600: #0b8f86;
+  --color-brand-teal-500: #10b3a3;
+  --color-brand-teal-400: #2dd4c4;
+  --color-brand-teal-300: #7fe8d8;
+
+  /* Sun / gold-orange: solar energy, warmth, optimism */
+  --color-brand-sun-600: #d97a0c;
+  --color-brand-sun-500: #f6a821;
+  --color-brand-sun-400: #fbc239;
+  --color-brand-sun-300: #fdd873;
+
+  /* WhatsApp CTA */
+  --color-brand-whats: #22c55e;
+  --color-brand-whats-dark: #17a349;
+
+  /* Neutrals */
+  --color-brand-ink: #0b1b26;
+  --color-brand-slate: #4c6273;
+  --color-brand-mist: #f3f8fb;
+  --color-brand-mist-2: #e8f1f5;
+
+  --font-display: "Poppins", "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+
+  --shadow-soft: 0 1px 2px rgba(8, 32, 50, 0.04), 0 8px 24px -8px rgba(8, 32, 50, 0.18);
+  --shadow-lift: 0 2px 6px rgba(8, 32, 50, 0.06), 0 16px 40px -12px rgba(8, 32, 50, 0.28);
+  --shadow-glow-sun: 0 8px 30px -6px rgba(246, 168, 33, 0.45);
+  --shadow-glow-teal: 0 8px 30px -6px rgba(16, 179, 163, 0.4);
+
+  --animate-fade-up: fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-fade-in: fade-in 0.5s ease both;
+  --animate-count-pop: count-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  --animate-scan: scan 2.2s ease-in-out infinite;
+  --animate-pulse-soft: pulse-soft 2.4s ease-in-out infinite;
+  --animate-bar-grow: bar-grow 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-float: float 6s ease-in-out infinite;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes count-pop {
+    0% {
+      opacity: 0;
+      transform: scale(0.85);
+    }
+    60% {
+      opacity: 1;
+      transform: scale(1.04);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  @keyframes scan {
+    0%,
+    100% {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 1;
+    }
+    50% {
+      transform: translateY(100%);
+    }
+  }
+  @keyframes pulse-soft {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.55;
+    }
+  }
+  @keyframes bar-grow {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-brand-mist);
+  color: var(--color-brand-ink);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100svh;
+  overflow-x: clip;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: var(--color-brand-sun-300);
+  color: var(--color-brand-navy-900);
+}
+
+/* thin, brand-tinted scrollbar (desktop) */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-brand-navy-600);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.origin-left {
+  transform-origin: left;
+}
+
+.bar-grow {
+  animation: var(--animate-bar-grow);
+}
