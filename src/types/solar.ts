@@ -27,6 +27,13 @@ export interface DadosContaEnergia {
   valorContaMensal?: number;
   /** true quando o vendedor marcou "não sei meu consumo em kWh". */
   naoSeiConsumo?: boolean;
+  /**
+   * Tarifa real do cliente (R$/kWh, já com impostos), quando conhecida —
+   * seja digitada manualmente ou lida automaticamente da fatura (ver
+   * `services/faturaReaderService.ts`). Quando ausente, o motor de cálculo
+   * usa `TARIFA_PADRAO_KWH` (uma média nacional) como aproximação.
+   */
+  tarifaPersonalizadaKwh?: number;
 }
 
 export interface ParametrosSimulacao {

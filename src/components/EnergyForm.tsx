@@ -1,7 +1,8 @@
-import { ChevronDown, CircleHelp, Gauge, Receipt, Settings2, Zap } from 'lucide-react';
-import { useState } from 'react';
+import { AlertTriangle, ChevronDown, CircleHelp, FileScan, Gauge, Loader2, Receipt, Settings2, Zap } from 'lucide-react';
+import { useRef, useState } from 'react';
 import { MODULOS_DISPONIVEIS } from '../config/solarConfig';
 import { useAudience } from '../context/AudienceContext';
+import { leituraAutomaticaDisponivel, lerFaturaAutomaticamente, type DadosExtraidosFatura } from '../services/faturaReaderService';
 import type { DadosContaEnergia, PotenciaModuloWp } from '../types/solar';
 import { FormField } from './ui/FormField';
 
@@ -19,6 +20,11 @@ export function EnergyForm({ dados, onChange, potenciaModuloWp, onChangePotencia
   const { audiencia } = useAudience();
   const mostrarAvancado = audiencia === 'vendedor';
 
+  const inputArquivoRef = useRef<HTMLInputElement>(null);
+  const [lendoFatura, setLendoFatura] = useState(false);
+  const [erroLeitura, setErroLeitura] = useState<string | null>(null);
+  const [leituraOk, setLeituraOk] = useState<DadosExtraidosFatura | null>(null);
+
   const valido =
     dados.formaEntrada === 'consumo'
       ? (dados.consumoMensalKwh ?? 0) > 0
@@ -28,12 +34,81 @@ export function EnergyForm({ dados, onChange, potenciaModuloWp, onChangePotencia
     onChange({ formaEntrada: aba });
   }
 
+  async function lidarComArquivoSelecionado(arquivo: File | undefined) {
+    if (!arquivo) return;
+    setErroLeitura(null);
+    setLeituraOk(null);
+    setLendoFatura(true);
+    try {
+      const extraido = await lerFaturaAutomaticamente(arquivo);
+      if (!extraido.consumoKwh || extraido.consumoKwh <= 0) {
+        setErroLeitura('Não consegui encontrar o consumo em kWh nessa fatura. Preencha manualmente abaixo.');
+        return;
+      }
+      onChange({
+        formaEntrada: 'consumo',
+        consumoMensalKwh: extraido.consumoKwh,
+        tarifaPersonalizadaKwh: extraido.tarifaMediaKwh ?? undefined,
+      });
+      setLeituraOk(extraido);
+    } catch (erro) {
+      setErroLeitura(erro instanceof Error ? erro.message : 'Não consegui ler essa fatura. Preencha manualmente abaixo.');
+    } finally {
+      setLendoFatura(false);
+      if (inputArquivoRef.current) inputArquivoRef.current.value = '';
+    }
+  }
+
   return (
     <div className="animate-fade-up space-y-5">
       <div>
         <h2 className="font-display text-[22px] font-bold text-brand-ink">Sua conta de energia</h2>
         <p className="mt-1 text-[14px] text-brand-slate">Use o consumo em kWh ou apenas o valor da conta — o que for mais rápido.</p>
       </div>
+
+      {leituraAutomaticaDisponivel() && (
+        <div className="rounded-2xl border border-dashed border-brand-teal-500/40 bg-brand-teal-500/6 p-4">
+          <input
+            ref={inputArquivoRef}
+            type="file"
+            accept="image/*,application/pdf"
+            className="hidden"
+            onChange={(e) => lidarComArquivoSelecionado(e.target.files?.[0])}
+          />
+          <button
+            type="button"
+            disabled={lendoFatura}
+            onClick={() => inputArquivoRef.current?.click()}
+            className="flex w-full items-center gap-3 text-left disabled:opacity-70"
+          >
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-teal-500/15 text-brand-teal-700">
+              {lendoFatura ? <Loader2 size={20} className="animate-spin" /> : <FileScan size={20} />}
+            </span>
+            <span>
+              <span className="block text-[13.5px] font-semibold text-brand-navy-900">
+                {lendoFatura ? 'Lendo sua conta de luz…' : 'Preencher automaticamente com foto/PDF da conta'}
+              </span>
+              <span className="block text-[12px] text-brand-slate">
+                {lendoFatura ? 'Isso leva alguns segundos.' : 'Tira uma foto ou anexa o PDF — a gente lê o consumo e a tarifa reais.'}
+              </span>
+            </span>
+          </button>
+
+          {leituraOk && (
+            <p className="mt-3 flex items-start gap-2 rounded-xl bg-white px-3 py-2.5 text-[12.5px] leading-relaxed text-brand-navy-800">
+              <FileScan size={15} className="mt-0.5 shrink-0 text-brand-teal-600" />
+              Lemos {leituraOk.consumoKwh?.toLocaleString('pt-BR')} kWh
+              {leituraOk.tarifaMediaKwh ? ` a R$ ${leituraOk.tarifaMediaKwh.toFixed(4)}/kWh` : ''}. Confira os campos abaixo antes de simular.
+            </p>
+          )}
+          {erroLeitura && (
+            <p className="mt-3 flex items-start gap-2 rounded-xl bg-amber-50 px-3 py-2.5 text-[12.5px] leading-relaxed text-amber-800">
+              <AlertTriangle size={15} className="mt-0.5 shrink-0 text-amber-600" />
+              {erroLeitura}
+            </p>
+          )}
+        </div>
+      )}
 
       <div className="grid grid-cols-2 gap-2 rounded-2xl bg-brand-mist p-1.5">
         <button
@@ -129,6 +204,24 @@ export function EnergyForm({ dados, onChange, potenciaModuloWp, onChangePotencia
                 ))}
               </div>
               <p className="mt-2 text-[11.5px] text-brand-slate">Wp por módulo · usado para estimar a quantidade de painéis.</p>
+
+              <div className="mt-4 border-t border-black/6 pt-4">
+                <FormField
+                  label="Tarifa real do cliente (opcional)"
+                  icon={<Receipt size={18} />}
+                  suffix="R$/kWh"
+                  inputMode="decimal"
+                  placeholder="Ex.: 1,0328"
+                  value={dados.tarifaPersonalizadaKwh ?? ''}
+                  onChange={(e) =>
+                    onChange({ tarifaPersonalizadaKwh: e.target.value ? Number(e.target.value) : undefined })
+                  }
+                />
+                <p className="mt-2 text-[11.5px] text-brand-slate">
+                  Some a Tarifa TE + Tarifa TU da fatura (já com impostos). Deixe em branco para usar a média
+                  nacional. Preenchido automaticamente quando você usa a leitura por foto/PDF acima.
+                </p>
+              </div>
             </div>
           )}
         </div>

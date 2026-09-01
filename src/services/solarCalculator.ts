@@ -31,7 +31,10 @@ const DIAS_MES = 30;
 export function calcularSimulacao(parametros: ParametrosSimulacao): ResultadoSimulacao {
   const { cliente, conta, potenciaModuloWp } = parametros;
 
-  const tarifaUtilizada = TARIFA_PADRAO_KWH;
+  // Usa a tarifa real do cliente quando conhecida (digitada ou lida da fatura);
+  // cai para a média nacional só quando não há nada mais preciso disponível.
+  const tarifaUtilizada =
+    conta.tarifaPersonalizadaKwh && conta.tarifaPersonalizadaKwh > 0 ? conta.tarifaPersonalizadaKwh : TARIFA_PADRAO_KWH;
 
   // 1) Normaliza consumo e valor da conta, seja qual for a forma de entrada.
   let consumoMensalEstimadoKwh: number;
