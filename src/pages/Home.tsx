@@ -20,7 +20,12 @@ export function Home() {
   return (
     <div className="relative min-h-svh overflow-hidden bg-brand-navy-900">
       {/* fundo: vídeo em loop (só simulador público) + gradiente + glow solar decorativo */}
-      {ehPublico && <BackgroundVideo srcMp4="/video/solar-hero.mp4" poster="/video/solar-hero-poster.jpg" />}
+      {ehPublico && (
+        <BackgroundVideo
+          srcMp4={`${import.meta.env.BASE_URL}video/solar-hero.mp4`}
+          poster={`${import.meta.env.BASE_URL}video/solar-hero-poster.jpg`}
+        />
+      )}
       <div
         className={`pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_82%_-4%,#f6a82133,transparent_45%),radial-gradient(circle_at_-6%_38%,#10b3a333,transparent_42%),linear-gradient(160deg,#082032_0%,#0d3450_46%,#124a6e_78%,#0b8f86_130%)] ${
           ehPublico ? 'opacity-90' : ''
