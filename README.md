@@ -18,9 +18,17 @@ npm run preview  # servir o build de produção localmente
 
 Requer Node 18+.
 
+## Deploy (GitHub Pages)
+
+O repositório já vem com um workflow (`.github/workflows/deploy.yml`) que builda e publica o site automaticamente no GitHub Pages a cada push na branch `main`. Só falta um passo manual, uma vez só: em **Settings → Pages** do repositório no GitHub, mudar "Source" para **GitHub Actions** (em vez de "Deploy from a branch"). Depois disso todo push em `main` já atualiza o site sozinho.
+
+Duas decisões técnicas por causa do GitHub Pages ser hospedagem estática (sem servidor por trás):
+- `vite.config.ts` tem `base: '/nury-energia-simulador/'` — precisa bater com o nome do repositório. Se o repositório for renomeado, esse valor tem que ser atualizado junto.
+- As rotas usam `HashRouter` (em vez de `BrowserRouter`) — por isso as URLs ficam com `#` (ex.: `.../#/simule`). Isso evita erro 404 ao dar refresh numa rota como `/resultado`, que o GitHub Pages não sabe redirecionar sozinho.
+
 ## Stack
 
-React 19 + TypeScript + Vite + Tailwind CSS v4 (tokens de marca via `@theme` em `src/index.css`) + React Router + lucide-react + jsPDF.
+React 19 + TypeScript + Vite + Tailwind CSS v4 (tokens de marca via `@theme` em `src/index.css`) + React Router (`HashRouter`) + lucide-react + jsPDF.
 
 ## Fluxo do vendedor (`/`)
 
@@ -38,7 +46,7 @@ Mesmas telas (Home, Simulador, Resultado), mesmo motor de cálculo — só o tex
 2. **`/simule/simulador`** — mesmo formulário, mas sem a seção "Configurações avançadas" (potência do módulo fica no padrão de 550 Wp, decisão técnica que não precisa aparecer para o visitante).
 3. **`/simule/resultado`** — mesmos cards/gráficos/economia acumulada/payback/financiamento. O bloco de CTA final fica só com **"QUERO UMA PROPOSTA"** e **"FALAR COM UM CONSULTOR"** — os dois abrem o WhatsApp comercial da Nury (`EMPRESA.telefoneComercial`) com uma mensagem pronta em 1ª pessoa (o visitante "se apresentando"). Sem "Enviar pelo WhatsApp" duplicado, sem PDF, sem compartilhar e sem link para histórico — só as duas chamadas de WhatsApp.
 
-Para embutir no site: basta linkar um botão ("Simule sua economia") para a URL pública `.../simule` (ex.: em um iframe, ou como um link normal que abre em nova aba).
+Para embutir no site: basta linkar um botão ("Simule sua economia") para a URL pública `.../#/simule` (ex.: em um iframe, ou como um link normal que abre em nova aba). O `#` faz parte da URL por causa do `HashRouter` (ver seção "Deploy" acima).
 
 ### Sobre os leads vindos do site
 
