@@ -1,5 +1,6 @@
-import { ArrowLeft, History, Sun } from 'lucide-react';
+import { ArrowLeft, History } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import logoNury from '../assets/logo-nury.png';
 import { EMPRESA } from '../config/solarConfig';
 import { useAudience } from '../context/AudienceContext';
 
@@ -41,9 +42,9 @@ export function Header({ titulo, subtitulo, onVoltar, mostrarHistorico, variante
             type="button"
             onClick={() => navigate(basePath || '/')}
             aria-label={EMPRESA.nome}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand-sun-400 to-brand-sun-600 shadow-glow-sun"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full shadow-glow-sun"
           >
-            <Sun size={19} className="text-brand-navy-900" strokeWidth={2.4} />
+            <img src={logoNury} alt={EMPRESA.nome} className="h-full w-full rounded-full object-cover" />
           </button>
         )}
         <div className="min-w-0">

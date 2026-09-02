@@ -6,7 +6,6 @@ import { atualizarStatusSimulacao } from '../services/historyService';
 import type { ResultadoPayback, ResultadoSimulacao } from '../types/solar';
 import { AccumulatedSavings } from './AccumulatedSavings';
 import { EconomyChart } from './EconomyChart';
-import { FinancingSimulator } from './FinancingSimulator';
 import { PaybackCard } from './PaybackCard';
 import { PdfGenerator } from './PdfGenerator';
 import { ShareSheet } from './ShareSheet';
@@ -48,7 +47,6 @@ export function SimulationResult({ resultado, registroId }: SimulationResultProp
       <EconomyChart resultado={resultado} />
       <AccumulatedSavings resultado={resultado} />
       <PaybackCard economiaAnualEstimada={resultado.economiaAnualEstimada} onResultadoChange={setPayback} />
-      <FinancingSimulator economiaMensalEstimada={resultado.economiaMensalEstimada} valorSistemaSugerido={payback?.valorEstimadoSistema} />
 
       {/* CTA comercial */}
       <div className="animate-fade-up rounded-3xl bg-gradient-to-br from-brand-navy-900 to-brand-navy-700 p-5 text-center text-white shadow-lift sm:p-7">
